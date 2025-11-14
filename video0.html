@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Видео</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #000;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #video-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        #play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            cursor: pointer;
+            font-size: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.3s;
+        }
+        
+        #play-button:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+        
+        #play-button::after {
+            content: '▶';
+            margin-left: 5px;
+        }
+        
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-family: Arial, sans-serif;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="video-container">
+        <button id="play-button"></button>
+        <div id="loading">Загрузка...</div>
+        <video id="video" controls controlsList="nodownload">
+            <source src="videos/video0.mp4" type="video/mp4">
+            Ваш браузер не поддерживает видео.
+        </video>
+    </div>
+    
+    <script>
+        const playButton = document.getElementById('play-button');
+        const video = document.getElementById('video');
+        const loading = document.getElementById('loading');
+        
+        playButton.addEventListener('click', function() {
+            playButton.style.display = 'none';
+            loading.style.display = 'block';
+            
+            video.play().then(() => {
+                loading.style.display = 'none';
+                
+                // Пытаемся открыть на полный экран
+                if (video.requestFullscreen) {
+                    video.requestFullscreen();
+                } else if (video.webkitRequestFullscreen) {
+                    video.webkitRequestFullscreen();
+                } else if (video.msRequestFullscreen) {
+                    video.msRequestFullscreen();
+                }
+            }).catch(err => {
+                console.error('Ошибка воспроизведения:', err);
+                loading.textContent = 'Ошибка загрузки видео';
+            });
+        });
+        
+        // Показываем кнопку когда видео готово
+        video.addEventListener('loadedmetadata', function() {
+            playButton.style.display = 'flex';
+        });
+    </script>
+</body>
+</html>
